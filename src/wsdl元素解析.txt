@@ -1,0 +1,57 @@
+<definitions targetNamespace="http://org.com/" name="MyServiceImplService">
+<types> types元素用作一个容器，用于定义XML模式内置类型中没有描述的各种数据类型
+<xsd:schema>
+<xsd:import namespace="http://org.com/" schemaLocation="http://localhost:8888/ws?xsd=1"/>  
+import元素使得可以在当前的WSDL文档中使用其他WSDL文档中指定的命名空间中的定义元素
+必须有namespace属性和location属性： 
+1.namespace属性：值必须与正导入的WSDL文档中声明的targetNamespace相匹配； 
+2.location属性：必须指向一个实际的WSDL文档，并且该文档不能为空
+</xsd:schema>
+</types>
+
+
+
+<message name="addUser"> message元素可以描述输出或者接受消息的有效负载；还可以描述SOAP文件头和错误detail元素的内容
+<part name="parameters" element="tns:addUser"/>
+</message>
+<message name="addUserResponse">
+<part name="parameters" element="tns:addUserResponse"/>
+</message>
+
+
+
+portType元素定义了Web服务的抽象接口。该接口有点类似Java的接口，都是定义了一个抽象类型和方法，没有定义实现。
+在WSDL中，portType元素是由binding和service元素来实现的，
+这两个元素用来说明Web服务实现使用的Internet协议、编码方案以及Internet地址
+
+<portType name="MyService">
+<operation name="addUser">
+<input wsam:Action="http://org.com/MyService/addUserRequest" message="tns:addUser"/>
+<output wsam:Action="http://org.com/MyService/addUserResponse" message="tns:addUserResponse"/>
+</operation>
+</portType>
+
+
+binding元素将一个抽象portType映射到一组具体协议(SOAO和HTTP)、消息传递样式、编码样式
+<binding name="MyServiceImplPortBinding" type="tns:MyService">
+<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+<operation name="addUser">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+</binding>
+
+
+service元素包含一个或者多个port元素，其中每个port元素表示一个不同的Web服务。
+port元素将URL赋给一个特定的binding，甚至可以使两个或者多个port元素将不同的URL赋值给相同的binding
+<service name="MyServiceImplService">
+<port name="MyServiceImplPort" binding="tns:MyServiceImplPortBinding">
+<soap:address location="http://localhost:8888/ws"/>
+</port>
+</service>
+</definitions>
