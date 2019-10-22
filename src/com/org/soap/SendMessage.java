@@ -16,7 +16,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
@@ -41,12 +40,16 @@ public class SendMessage {
 		JAXBContext jax = JAXBContext.newInstance(User.class);
 		Marshaller marshaller = jax.createMarshaller();
 		User user = new User(1, "admin", "111");
+		//È¡ÏûstartDocument or endDocument <?xml version="1.0" encoding="utf-8"?>
 		marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
 		StringWriter stringWriter = new StringWriter();
 		marshaller.marshal(user, stringWriter);
 
-		String msg = "<q0:addUser xmlns:q0=\"http://org.com/\">" + stringWriter.toString() + "</q0:addUser>";
-		StreamSource source = new StreamSource(new StringReader(msg));
+		//String msg = "<q0:addUser xmlns:q0=\"http://org.com/\">" + stringWriter.toString() + "</q0:addUser>";
+		String msg1="<q0:authInfo>asddasd</q0:authInfo>";
+		String msg="<q0:list xmlns:q0=\"http://org.com/\">"+"</q0:list>";
+		
+		StreamSource source = new StreamSource(new StringReader(msg1+msg));
 		Source invoke = dispatch.invoke(source);
 
 		Transformer newTransformer = TransformerFactory.newInstance().newTransformer();
@@ -58,7 +61,7 @@ public class SendMessage {
 		NodeList list = (NodeList) newXPath.evaluate("//user ", result.getNode(), XPathConstants.NODESET);
 
 		Unmarshaller unmarshaller = jax.createUnmarshaller();
-		User userbean = (User) unmarshaller.unmarshal(list.item(0));
+		User userbean = (User) unmarshaller.unmarshal(list.item(1));
 		System.out.println(userbean.toString());
 
 	}
